@@ -15,8 +15,8 @@ from itertools import groupby
 
 stemmer = SnowballStemmer("english")
 lemmatizer = WordNetLemmatizer()
-stop_words = set(stopwords.words('english'))
-stop_words.update(["wa", "gt", "amp", "u", "ha", "le", "doe", "don", 've', 'make', 'get'])
+#stop_words = set(stopwords.words('english'))
+#stop_words.update(["wa", "gt", "amp", "u", "ha", "le", "doe", "don", 've', 'make', 'get'])
 # Initialize NLP libraries and download necessary resources
 #nltk.download('stopwords')
 #nltk.download('averaged_perceptron_tagger')
