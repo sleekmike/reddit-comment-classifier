@@ -6,7 +6,6 @@ from io import StringIO
 from preprocessing import cleaner 
 import nltk
 
-
 nltk.download('stopwords')
 #nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
@@ -21,6 +20,37 @@ def load_model_xgboost():
     loaded_encoder = joblib.load('xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
 
+def load_model_voting1():
+    # To load the saved model and preprocessors later
+    # Load the VotingClassifier model
+    loaded_voting_clf = joblib.load('voting_classifier_model.pkl')
+    # Load the TfidfVectorizer
+    loaded_vectorizer = joblib.load('voting_classifier_tfidf_vectorizer.pkl')
+    # Load the LabelEncoder
+    loaded_encoder = joblib.load('voting_classifier_label_encoder.pkl')
+    # Load the MaxAbsScaler
+    loaded_scaler = joblib.load('voting_classifier_maxabs_scaler.pkl')
+    return loaded_voting_clf, loaded_vectorizer, loaded_encoder, loaded_scaler
+
+# Classify a CSV File
+def classify_csv_voting(input_csv):
+    # Load the model, vectorizer, label encoder, and scaler
+    model, vectorizer, encoder, scaler = load_model_voting1()
+    # Preprocess and clean data
+    df = cleaner(input_csv)
+    # Vectorize the comments
+    X_new_tfidf = vectorizer.transform(df['comments'])
+    # Scale the features using the loaded scaler
+    X_new_scaled = scaler.transform(X_new_tfidf)
+    # Predict the labels
+    y_pred = model.predict(X_new_scaled)
+    # Decode the labels
+    df['Label'] = encoder.inverse_transform(y_pred)
+    # Save the results to a new CSV
+    output_csv = "classified_voting.csv"
+    df.to_csv(output_csv, index=False)
+    print(f"Voting Classified data saved to {output_csv}")
+    return df
 
 # Classify a CSV File
 def classify_csv(input_csv):
@@ -57,7 +87,12 @@ if uploaded_file is not None:
             st.error("CSV file must contain 'username' and 'comment' columns.")
         else:
             # Classify the comments
-            classified_df = classify_csv(df)
+            #classified_df = classify_csv(df)
+            classified_df = classify_csv_voting(df)
+            
+            # Display the classified DataFrame
+            st.write("Classified Data:")
+            st.dataframe(classified_df)
             
             # Convert DataFrame to CSV
             csv = classified_df.to_csv(index=False)
