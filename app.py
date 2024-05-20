@@ -4,6 +4,13 @@ import joblib
 import base64
 from io import StringIO
 from preprocessing import cleaner 
+import nltk
+
+
+nltk.download('stopwords')
+#nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('punkt')
 
 def load_model_xgboost():
     # Load the model
@@ -77,5 +84,3 @@ st.write("""
 - The model will label each comment as either 'Medical Doctor', 'Veterinarian', or 'Other'.
 - The output CSV file will contain the original data along with a new 'label' column.
 """)
-
-# pip3 install streamlit 

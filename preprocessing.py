@@ -18,10 +18,11 @@ lemmatizer = WordNetLemmatizer()
 #stop_words = set(stopwords.words('english'))
 #stop_words.update(["wa", "gt", "amp", "u", "ha", "le", "doe", "don", 've', 'make', 'get'])
 # Initialize NLP libraries and download necessary resources
-#nltk.download('stopwords')
-#nltk.download('averaged_perceptron_tagger')
-#nltk.download('wordnet')
-#============================================================>    Step 1: Data Prerpocessing and cleaning <============================================================# 
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('punkt')
+#============================================================> Data Preprocessing and Cleaning <============================================================# 
 # Function to load data
 def load_data(filepath):
     return pd.read_csv(filepath)
@@ -98,40 +99,7 @@ def duplicates_repetitions_cleaner(data):
         return check_and_truncate(data) if detect_redundancy(data) else data
     else:
         raise ValueError("Input must be a pandas DataFrame or a string")
-
-
-
-#def get_wordnet_pos(treebank_tag):
-#    """Converts treebank tags to wordnet tags."""
-#    if treebank_tag.startswith('J'):
-#        return wordnet.ADJ
-#    elif treebank_tag.startswith('V'):
-#        return wordnet.VERB
-#    elif treebank_tag.startswith('N'):
-#        return wordnet.NOUN
-#    elif treebank_tag.startswith('R'):
-#        return wordnet.ADV
-#    else:
-#        return None
-
-#def lemmatize_text(text):
-#    lemmatizer = WordNetLemmatizer()
-#    tokens = word_tokenize(text)
-#    tagged_tokens = pos_tag(tokens)
-#    lemmatized = []
-#    for word, tag in tagged_tokens:
-#        wn_tag = get_wordnet_pos(tag)
-#        if wn_tag:
-#            lemma = lemmatizer.lemmatize(word, pos=wn_tag)
-#        else:
-#            lemma = lemmatizer.lemmatize(word)
-#        lemmatized.append(lemma)
-#    return ' '.join(lemmatized)
-
-## Stemming text
-#def stem_text(comment):
-#    return " ".join([stemmer.stem(word) for word in comment.split()])
-
+    
 # Main function to process data
 def process_data(data, preprocess_steps):
     for step in preprocess_steps:
@@ -149,6 +117,3 @@ def cleaner(df):
     print("Cleaning and preprocessing the data...")
     comments_df['comments'] = process_data(comments_df['comments'], preprocessing_steps)
     return comments_df 
-
-
-#scikit-learn imblearn
