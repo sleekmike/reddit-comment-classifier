@@ -13,11 +13,11 @@ nltk.download('punkt')
 
 def load_model_xgboost():
     # Load the model
-    loaded_model = joblib.load('xgboost_model.pkl')
+    loaded_model = joblib.load('../models/2xgboost_model.pkl')
     # Load the TfidfVectorizer
-    loaded_vectorizer = joblib.load('xgboost_tfidf_vectorizer.pkl')
+    loaded_vectorizer = joblib.load('../models/2xgboost_tfidf_vectorizer.pkl')
     # Load the LabelEncoder
-    loaded_encoder = joblib.load('xgboost_label_encoder.pkl')
+    loaded_encoder = joblib.load('../models/2xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
 
 def load_model_voting1():
@@ -70,39 +70,32 @@ def classify_csv(input_csv):
     print(f"Classified data saved to {output_csv}")
     return df
 
-
 # Streamlit app
 st.title("Reddit Comment Classification App")
 st.write("Upload a CSV file with 'username' and 'comment' columns to classify the comments.")
-
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file is not None:
     try:
         # Read the uploaded CSV file
         df = pd.read_csv(uploaded_file)
-        
         # Check if the necessary columns are present
         if 'username' not in df.columns or 'comments' not in df.columns:
             st.error("CSV file must contain 'username' and 'comment' columns.")
         else:
             # Classify the comments
-            #classified_df = classify_csv(df)
-            classified_df = classify_csv_voting(df)
-            
+            classified_df = classify_csv(df)
+            #classified_df = classify_csv_voting(df)
             # Display the classified DataFrame
             st.write("Classified Data:")
             st.dataframe(classified_df)
-            
             # Convert DataFrame to CSV
             csv = classified_df.to_csv(index=False)
             b64 = base64.b64encode(csv.encode()).decode()
             download_link = f'<a href="data:file/csv;base64,{b64}" download="classified_comments.csv">Download classified CSV file</a>'
-            
             st.success("Comments classified successfully!")
             st.balloons()
             st.markdown(download_link, unsafe_allow_html=True)
-    
     except Exception as e:
         st.error(f"An error occurred while processing the file: {e}")
 else:
