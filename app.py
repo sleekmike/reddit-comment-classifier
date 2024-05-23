@@ -13,9 +13,9 @@ nltk.download('punkt')
 
 def load_model_xgboost():
     # Load the model
-    loaded_model = joblib.load('../models/2xgboost_model.pkl')
+    loaded_model = joblib.load('./models/2xgboost_model.pkl')
     # Load the TfidfVectorizer
-    loaded_vectorizer = joblib.load('../models/2xgboost_tfidf_vectorizer.pkl')
+    loaded_vectorizer = joblib.load('./models/2xgboost_tfidf_vectorizer.pkl')
     # Load the LabelEncoder
     loaded_encoder = joblib.load('../models/2xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
