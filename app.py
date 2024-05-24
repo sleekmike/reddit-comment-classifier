@@ -17,7 +17,7 @@ def load_model_xgboost():
     # Load the TfidfVectorizer
     loaded_vectorizer = joblib.load('./models/2xgboost_tfidf_vectorizer.pkl')
     # Load the LabelEncoder
-    loaded_encoder = joblib.load('../models/2xgboost_label_encoder.pkl')
+    loaded_encoder = joblib.load('./models/2xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
 
 def load_model_voting1():
