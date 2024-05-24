@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import joblib
 import base64
-from io import StringIO
 from preprocessing import cleaner 
 import nltk
 
@@ -13,15 +12,14 @@ nltk.download('punkt')
 
 def load_model_xgboost():
     # Load the model
-    loaded_model = joblib.load('./models/2xgboost_model.pkl')
+    loaded_model = joblib.load('./models/3xgboost_model.pkl')
     # Load the TfidfVectorizer
-    loaded_vectorizer = joblib.load('./models/2xgboost_tfidf_vectorizer.pkl')
+    loaded_vectorizer = joblib.load('./models/3xgboost_tfidf_vectorizer.pkl')
     # Load the LabelEncoder
-    loaded_encoder = joblib.load('./models/2xgboost_label_encoder.pkl')
+    loaded_encoder = joblib.load('./models/3xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
 
 def load_model_voting1():
-    # To load the saved model and preprocessors later
     # Load the VotingClassifier model
     loaded_voting_clf = joblib.load('voting_classifier_model.pkl')
     # Load the TfidfVectorizer
@@ -33,11 +31,11 @@ def load_model_voting1():
     return loaded_voting_clf, loaded_vectorizer, loaded_encoder, loaded_scaler
 
 # Classify a CSV File
-def classify_csv_voting(input_csv):
+def classify_csv_voting(df):
     # Load the model, vectorizer, label encoder, and scaler
     model, vectorizer, encoder, scaler = load_model_voting1()
     # Preprocess and clean data
-    df = cleaner(input_csv)
+    df = cleaner(df)
     # Vectorize the comments
     X_new_tfidf = vectorizer.transform(df['comments'])
     # Scale the features using the loaded scaler
@@ -53,11 +51,11 @@ def classify_csv_voting(input_csv):
     return df
 
 # Classify a CSV File
-def classify_csv(input_csv):
+def classify_csv(df):
     # Load the model, vectorizer, and label encoder
     model, vectorizer, encoder =  load_model_xgboost()
     # Preprocess and clean data 
-    df = cleaner(input_csv)
+    df = cleaner(df)
     # Vectorize the comments
     X_new_tfidf = vectorizer.transform(df['comments'])
     # Predict the labels

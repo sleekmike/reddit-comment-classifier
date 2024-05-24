@@ -1,17 +1,12 @@
-import pandas as pd
 import re
-import numpy as np
 import nltk
+import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer, WordNetLemmatizer
 from nltk import pos_tag
 from nltk.corpus import wordnet
-import csv
-import numpy as np
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize, word_tokenize
-import pandas as pd
-from itertools import groupby
 
 stemmer = SnowballStemmer("english")
 lemmatizer = WordNetLemmatizer()
@@ -22,6 +17,7 @@ nltk.download('stopwords')
 nltk.download('averaged_perceptron_tagger')
 nltk.download('wordnet')
 nltk.download('punkt')
+
 #============================================================> Data Preprocessing and Cleaning <============================================================# 
 # Function to load data
 def load_data(filepath):
@@ -63,7 +59,6 @@ def check_and_truncate(text, max_words=200):
         truncated_text = get_first_approx_words(text, max_words)
         if not truncated_text.strip():  # Check if the result is empty
             #return "Text was truncated to empty, reverting to first 200 words."
-            #return truncated_text
             return text
         else: 
             return truncated_text
@@ -78,8 +73,6 @@ def detect_redundancy(text):
     if redundancy_ratio >= 2:  # Threshold for considering text as having redundancies
          return True
     else:
-        print("redundancy_ratio", redundancy_ratio)
-        #redundancy_ratio, "CULPRIT: ", text)
         return False
 
 def duplicates_repetitions_cleaner(data):
@@ -109,7 +102,6 @@ def process_data(data, preprocess_steps):
 
 # Function to setup and process dataset
 def cleaner(df):
-    #comments_df = load_data('reddit_usernames_comments.csv')
     comments_df = df
     # Define preprocessing steps
     preprocessing_steps =  [clean_data, duplicates_repetitions_cleaner]
