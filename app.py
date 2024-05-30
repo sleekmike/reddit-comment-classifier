@@ -10,13 +10,29 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('punkt')
 
+# Function to refine predictions
+def refine_predictions(comments, predictions, label_mapping):
+    keywords = [
+        'vet tech', 'vet technician', 'vet assistant', 'tech', 'assistant',
+        'RVT', 'CVT', 'LVT', 'VTS', 'CVPM', 
+        'AVMA', 'NAVTA','DACVS', 'DACVIM', 'javma',
+        'DACVECC', 'DACVR', 'vca', 'va', 'CVA'
+    ]
+    refined_predictions = []
+    for comment, prediction in zip(comments, predictions):
+        if any(keyword.lower() in comment.lower() for keyword in keywords):
+            refined_predictions.append(label_mapping.transform(['Other'])[0])
+        else:
+            refined_predictions.append(prediction)
+    return refined_predictions
+
 def load_model_xgboost():
     # Load the model
-    loaded_model = joblib.load('./models/3xgboost_model.pkl')
+    loaded_model = joblib.load('./models/4xgboost_model.pkl')
     # Load the TfidfVectorizer
-    loaded_vectorizer = joblib.load('./models/3xgboost_tfidf_vectorizer.pkl')
+    loaded_vectorizer = joblib.load('./models/4xgboost_tfidf_vectorizer.pkl')
     # Load the LabelEncoder
-    loaded_encoder = joblib.load('./models/3xgboost_label_encoder.pkl')
+    loaded_encoder = joblib.load('./models/4xgboost_label_encoder.pkl')
     return loaded_model, loaded_vectorizer, loaded_encoder
 
 def load_model_voting1():
@@ -53,17 +69,21 @@ def classify_csv_voting(df):
 # Classify a CSV File
 def classify_csv(df):
     # Load the model, vectorizer, and label encoder
-    model, vectorizer, encoder =  load_model_xgboost()
-    # Preprocess and clean data 
+    model, vectorizer, encoder = load_model_xgboost()
+    # Preprocess and clean data
     df = cleaner(df)
-    # Vectorize the comments
-    X_new_tfidf = vectorizer.transform(df['comments'])
+    # Vectorize the comment
+    X_new_tfidf = vectorizer.transform(df['comments']) 
     # Predict the labels
     y_pred = model.predict(X_new_tfidf)
+    # Refine the predictions
+    #label_mapping = dict(zip(encoder.classes_, encoder.transform(encoder.classes_)))
+    #y_pred_refined = refine_predictions(df['comments'], y_pred, label_mapping)
+    y_pred_refined = refine_predictions(df['comments'], y_pred, encoder)
     # Decode the labels
-    df['Label'] = encoder.inverse_transform(y_pred)
+    df['Label'] = encoder.inverse_transform(y_pred_refined)
     # Save the results to a new CSV
-    output_csv = "classified.csv"
+    output_csv = "refined_classified.csv"
     df.to_csv(output_csv, index=False)
     print(f"Classified data saved to {output_csv}")
     return df
